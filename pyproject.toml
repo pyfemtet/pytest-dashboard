@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "pytest_dashboard"
+name = "pytest-dashboard"
 version = "0.1.0"  # ignored by versioning plugin
 description = ""
 authors = ["kazuma.naito <kazuma.naito@murata.com>"]
@@ -38,3 +38,6 @@ enable = true
 [build-system]
 requires = ["poetry-core>=1.0.0", "poetry-dynamic-versioning>=1.0.0,<2.0.0"]
 build-backend = "poetry_dynamic_versioning.backend"
+
+[tool.poetry.plugins]
+pytest11 = { pytest_dashboard_plugin = "pytest_dashboard.conftest" }  # by add this, work without conftest.py.

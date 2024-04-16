@@ -43,7 +43,7 @@ def run_pytest(debug=False):
         sys.executable,
         '-m',
         'pytest',
-        f'--junit-xml={result_path}',  # [options]
+        # f'--junit-xml={result_path}',  # [options]
         '--capture=no',
         directory,
     ])
@@ -51,42 +51,6 @@ def run_pytest(debug=False):
 
 def launch_pytest_dashboard():
     ...
-
-
-# def _parse_junit():
-#
-#     result_path = os.path.join(SAMPLE_DIRECTORY, 'pytest-result.xml')
-#
-#
-#     from junitparser import JUnitXml
-#     # from lxml.etree import XMLParser, parse
-#     #
-#     # def parse_func(file_path):
-#     #     xml_parser = XMLParser(huge_tree=True)
-#     #     return parse(file_path, xml_parser)
-#     #
-#     # xml = JUnitXml.fromfile(result_path, parse_func)
-#
-#
-#     xml = JUnitXml.fromfile(result_path)
-#     # n_tests: int = xml.tests
-#     # n_failures: int = xml.failures
-#     # n_errors: int = xml.errors
-#     # n_skipped: int = xml.skipped
-#
-#     for suite in xml:
-#         # handle suites
-#         print(suite)
-#         for case in suite:
-#             # handle cases
-#             print(case)
-#             # a:str = case.name
-#             # a:bool = case.is_passed
-#             # a:bool = case.is_skipped
-#             # a:datetime.datetime = case.time
-#
-#     pass
-
 
 
 if __name__ == '__main__':
