@@ -3,13 +3,10 @@ name: Upload Python Package via Poetry
 on:
   release:
     types: [published]
-  # if debug
-  workflow_dispatch:
 
 jobs:
   deploy:
-    # if debug, commented out
-    # if: startsWith(github.ref, 'refs/tags/')  # only publish to PyPI on tag pushes
+    if: startsWith(github.ref, 'refs/tags/')  # only publish to PyPI on tag pushes
 
     runs-on: ubuntu-latest
 
