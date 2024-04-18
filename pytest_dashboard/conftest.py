@@ -32,16 +32,26 @@ during_test = False
 progress_path = None
 
 
-def set_log_path(root):
+def set_log_path(root, specified_path=None):
     global progress_path
-    progress_path = os.path.join(
-        root,
-        datetime.datetime.now().strftime('%Y%m%d-%H%M%S-progress.yaml'),
+    if specified_path is None:
+        progress_path = os.path.join(
+            root,
+            datetime.datetime.now().strftime('%Y%m%d-%H%M%S-progress.yaml'),
+        )
+    else:
+        progress_path = specified_path
+
+
+def pytest_addoption(parser):
+    parser.addoption(
+        '--progress-path', action='store', default=None, help='pytest progress file path (.yaml)'
     )
 
 
 def pytest_collection_finish(session: Session):
-    set_log_path(session.startpath)  # directory where pytest is launched
+    specified_path = session.config.getoption('progress_path')
+    set_log_path(session.startpath, specified_path)  # if None, directory where pytest is launched
     # file_or_dir: Tuple[str] or None = session.config.getoption('file_or_dir'))  # list of specified [file_or_dir]
     with open(progress_path, 'w', encoding='utf-8', newline=BR) as f:
         f.write(f'items:{BR}')
