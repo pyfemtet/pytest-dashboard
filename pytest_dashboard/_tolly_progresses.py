@@ -94,8 +94,12 @@ def monitor_progress(progresses_dir, entire_progress_path=None):
         daemon=True
     )
     t.start()
-    print(f'starts continuous update of {entire_progress_path}.')
-    input('press enter to quit.')
+    print()
+    print('##############')
+    print(f'  Starts continuous update of {entire_progress_path}.')
+    print('  Press enter to quit.')
+    print('##############')
+    input()
     should_stop = True
 
 
