@@ -51,6 +51,7 @@ def run_pytest(debug=False):
 
 def launch_pytest_dashboard():
     ...
+    raise NotImplementedError
 
 
 if __name__ == '__main__':
