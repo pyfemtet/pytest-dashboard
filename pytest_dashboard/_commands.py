@@ -12,23 +12,8 @@ SAMPLE_DIRECTORY = os.path.join(
 )
 
 
-def run_pytest(debug=False):
-    parser = argparse.ArgumentParser()
-    parser.add_argument(
-        '-d',
-        '--directory',
-        help='test を含むディレクトリ',
-        type=str
-    )
-
-    args = parser.parse_args()
-
-    if debug:
-        directory = SAMPLE_DIRECTORY
-
-    else:
-        assert os.path.exists(args.directory)
-        directory = args.directory
+def run_pytest():  # debug code
+    directory = SAMPLE_DIRECTORY
 
     # run pytest
     run([
@@ -37,12 +22,8 @@ def run_pytest(debug=False):
         'pytest',
         '--capture=no',
         directory,
+        # f'--progress-path={}'
     ])
-
-
-def launch_pytest_dashboard():
-    ...
-    raise NotImplementedError
 
 
 if __name__ == '__main__':
