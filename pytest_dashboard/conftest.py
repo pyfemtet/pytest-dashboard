@@ -71,6 +71,5 @@ def pytest_report_teststatus(report: TestReport, config):
 
 
 def pytest_runtest_teardown(item):
-    # global during_test
-    # during_test = False
+    # this function is called before pytest_report_teststatus
     pass
