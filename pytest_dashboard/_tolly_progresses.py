@@ -19,7 +19,7 @@ UPDATE_INTERVAL = 1
 should_stop = False
 
 
-def _progress_passed(data):
+def _progress_passed(data) -> bool:
     # if empty, return False
     if data is None:
         return False
@@ -43,7 +43,7 @@ def _progress_passed(data):
     return all(passed_list)
 
 
-def _progress_state(data):
+def _progress_state(data) -> str:
     # if empty, not started
     if data is None:
         return 'not started'
@@ -56,21 +56,31 @@ def _progress_state(data):
         return 'finished'
 
     # else, ongoing
-    if len(data['items']) > len(data['results']):
-        return 'ongoing'
+    return 'ongoing'
 
-    return 'undefined'
 
 def merge_progress_files(progresses_dir, entire_progress_path):
     # glob all -progress.yaml and check their state and passed
     merged_data = {}
+    state_list = []
+    passed_list = []
     for path in glob(os.path.join(progresses_dir, '*-progress.yaml')):
         with open(path, 'r') as f:
             data = yaml.safe_load(f)
+            # add each progress
             name = os.path.basename(path)[:-14]  # -progress.yaml is 14 chars
             state = _progress_state(data)
             passed = _progress_passed(data)
             merged_data[name] = dict(state=state, passed=passed)
+            # add to entire list
+            state_list.append(state)
+            passed_list.append(passed)
+
+    # add entire progress
+    name = 'entire'
+    state = 'finished' if all([s=='finished' for s in state_list]) else 'ongoing'
+    passed = all(passed_list)
+    merged_data[name] = dict(state=state, passed=passed)
 
     # save merged entire-progress.yaml
     with open(entire_progress_path, 'w') as f:
