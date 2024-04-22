@@ -8,7 +8,7 @@ license = "BSD-3-Clause"
 repository = "https://github.com/pyfemtet/pytest-dashboard"
 
 [tool.poetry.dependencies]
-python = " >= 3.9.3, < 3.13"
+python = " >= 3.9, < 4.0.0"
 dash = "^2.14.2"
 plotly = "^5.18.0"
 dash-bootstrap-components = "^1.5.0"
