@@ -2,10 +2,12 @@ import os
 from glob import glob
 from time import sleep
 from threading import Thread
+from subprocess import run
 
 import yaml
 
 import pytest_dashboard
+from pytest_dashboard import config
 
 
 SAMPLE_PROGRESS_DIR = os.path.join(
@@ -59,7 +61,36 @@ def _progress_state(data) -> str:
     return 'ongoing'
 
 
-def merge_progress_files(progresses_dir, entire_progress_path):
+def _check_notification(data):
+
+    global should_stop
+
+    if data['entire']['state'] == 'finished':
+
+        if data['entire']['passed']:
+            prefix = '(passed)'
+        else:
+            prefix = '(failed)'
+
+        sbj = prefix + 'finish pyenv-package-test!!'
+        bdy = yaml.dump(data)
+
+        run([
+            'powershell',
+            'send-mailmessage',
+            '-from', config.mail_from,
+            '-to', config.mail_to,
+            '-subject', f'"{sbj}"',
+            '-body', f'"{bdy}"',
+            '-encoding', '([System.Text.Encoding]::UTF8)',
+            '-port', config.port,
+            '-smtpserver', config.smtpserver,
+        ])
+
+        should_stop = True
+
+
+def merge_progress_files(progresses_dir, entire_progress_path, notification):
     # glob all -progress.yaml and check their state and passed
     merged_data = {}
     state_list = []
@@ -86,14 +117,22 @@ def merge_progress_files(progresses_dir, entire_progress_path):
     with open(entire_progress_path, 'w') as f:
         yaml.dump(merged_data, f)
 
+    # check notification
+    if notification:
+        _check_notification(merged_data)
 
-def _update_forever(progresses_dir, entire_progress_path):
+
+def _update_forever(progresses_dir, entire_progress_path, notification):
     while not should_stop:
-        merge_progress_files(progresses_dir, entire_progress_path)
+        merge_progress_files(progresses_dir, entire_progress_path, notification)
         sleep(UPDATE_INTERVAL)
 
 
-def monitor_progress(progresses_dir, entire_progress_path=None):
+def monitor_progress(
+        progresses_dir:str,
+        entire_progress_path:str or None=None,
+        notification:bool=False,
+):
     global should_stop
 
     if entire_progress_path is None:
@@ -102,7 +141,7 @@ def monitor_progress(progresses_dir, entire_progress_path=None):
 
     t = Thread(
         target=_update_forever,
-        args=(progresses_dir, entire_progress_path,),
+        args=(progresses_dir, entire_progress_path, notification,),
         daemon=True
     )
     t.start()
@@ -113,11 +152,3 @@ def monitor_progress(progresses_dir, entire_progress_path=None):
     print('##############')
     input()
     should_stop = True
-
-
-if __name__ == '__main__':
-    monitor_progress(
-        progresses_dir=SAMPLE_PROGRESS_DIR,
-        entire_progress_path='entire.yaml'
-    )
-

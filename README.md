@@ -13,7 +13,7 @@ the progress files (ends with `-progress.yaml`)
 inside `PROGRESS_DIR` and save the state summary
 to `path/to/entire-progress.yaml`.
 
-So it is recommended to set `--progress-path` option of pytest
+So it is necessary to set `--progress-path` option of pytest
 ending with `-progress.yaml`.
 For example, `2024-04-22-progress.yaml`,
 
@@ -22,11 +22,13 @@ For example, `2024-04-22-progress.yaml`,
 > you cannot save the entire progress file to
 > the same directory with each progress file.
 
-`python -m pytest_dashboard.tally --progress-dir=[dir/contains/progress.yaml_files]`
-by this command, you monitor -progress.yaml files
-inside `dir/contains/progress.yaml_files`
-and continurous update to tally them
-to `--entire-progress-path` (optional, default to `entire-progress.yaml`) file.
+
+`python -m pytest_dashboard.tally PROGRESS_DIR --notification=True`
+By this command, you will get mail notification when entire progress is finished.
+> **Note**
+> Please make and implement pytest_dashboard.config
+> that contains information abaout mail address and SMTP server.
+
 
 `python -m pytest_dashboard.launch_pytest_dashboard`
 NOT IMPLEMENTED!
