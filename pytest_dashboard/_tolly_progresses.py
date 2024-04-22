@@ -48,21 +48,23 @@ def _progress_state(data):
     if data is None:
         return 'not started'
 
-    # if len(items) > len(results), in progress
-    if len(data['items']) > len(data['results']):
-        return 'in progress'
-
-    # if len(items) == len(results), finished
-    if len(data['items']) == len(data['results']):
+    # if len(items) == len(results) and data['results'][-1] has the key 'teardown', finished
+    if (
+            len(data['items']) == len(data['results'])
+            and 'teardown' in data['results'][-1].keys()
+    ):
         return 'finished'
+
+    # else, ongoing
+    if len(data['items']) > len(data['results']):
+        return 'ongoing'
 
     return 'undefined'
 
-
 def merge_progress_files(progresses_dir, entire_progress_path):
-    # glob all .yaml and check their state and passed
+    # glob all -progress.yaml and check their state and passed
     merged_data = {}
-    for path in glob(os.path.join(progresses_dir, '*progress.yaml')):
+    for path in glob(os.path.join(progresses_dir, '*-progress.yaml')):
         with open(path, 'r') as f:
             data = yaml.safe_load(f)
             name = os.path.basename(path)[:-14]  # -progress.yaml is 14 chars
