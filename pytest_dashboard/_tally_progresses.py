@@ -26,6 +26,10 @@ def _progress_passed(data) -> bool:
     if data is None:
         return False
 
+    # if not started, return False
+    if data['results'] is None:
+        return False
+
     # if all(results), return True
     passed_list = []
     for result in data['results']:
@@ -35,7 +39,6 @@ def _progress_passed(data) -> bool:
         teardown = result['teardown'] if 'teardown' in result.keys() else None
         passed = True
         if setup is not None:
-
             passed = passed * (setup == 'passed')
         if call is not None:
             passed = passed * (call == 'passed')
@@ -51,11 +54,12 @@ def _progress_state(data) -> str:
         return 'not started'
 
     # if len(items) == len(results) and data['results'][-1] has the key 'teardown', finished
-    if (
-            len(data['items']) == len(data['results'])
-            and 'teardown' in data['results'][-1].keys()
-    ):
-        return 'finished'
+    if data['results'] is not None:
+        if (
+                len(data['items']) == len(data['results'])
+                and 'teardown' in data['results'][-1].keys()
+        ):
+            return 'finished'
 
     # else, ongoing
     return 'ongoing'
