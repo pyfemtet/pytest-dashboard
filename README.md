@@ -1,13 +1,23 @@
 # pytest-dashboard
 
+## example
+- Download project
+- Run some pytest with `--progress-path` option. The value should end with `-progress.yaml`.
+    - i.e.) `pytest <path_to_project>\sample-tests --progress-path=<path_to_project>\sample-tests\sample-progress.yaml`
+    - You will get a `sample-progress.yaml` file.
+- Run pytest dashboard
+    - i.e.) `tally-pytest <path_to_project>\sample-tests`
+    - You will get a `entire-progress.yaml` file in working folder.
+
 ## usage
-`python -m pytest`
+`pytest`
 by this command, you get `[datetime]-progress.yaml` file on working directory as realtime pytest progress report.
 
-`python -m pytest --progress-path=[path/to/some-progress.yaml]`
+`pytest --progress-path=[path/to/some-progress.yaml]`
 by this command, you get `path/to/some-progress.yaml` file.
+The value should end with `-progress.yaml`.
 
-`python -m pytest-dashboard.tally PROGRESSES_DIR --entire_progress_path=[path/to/entire-progress.yaml]`
+`tally-pytest PROGRESSES_DIR --entire_progress_path=[path/to/entire-progress.yaml]`
 by this command, you get started to monitor changes of
 the progress files (ends with `-progress.yaml`)
 inside `PROGRESS_DIR` and save the state summary
@@ -22,13 +32,9 @@ For example, `2024-04-22-progress.yaml`,
 > you cannot save the entire progress file to
 > the same directory with each progress file.
 
-
-`python -m pytest_dashboard.tally PROGRESS_DIR --notification=True`
+`tally-pytest PROGRESS_DIR --notification=True`
 By this command, you will get mail notification when entire progress is finished.
 > **Note**
-> Please make and implement pytest_dashboard.config
+> Please implement pytest_dashboard.config
 > that contains information abaout mail address and SMTP server.
-
-
-`python -m pytest_dashboard.launch_pytest_dashboard`
-NOT IMPLEMENTED!
+> This command works with powershell `Send-MailMessage` command.

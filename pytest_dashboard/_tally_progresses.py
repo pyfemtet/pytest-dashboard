@@ -130,13 +130,11 @@ def _update_forever(progresses_dir, entire_progress_path, notification):
 
 def monitor_progress(
         progresses_dir:str,
-        entire_progress_path:str or None=None,
+        entire_progress_path:str='./entire-progress.yaml',
         notification:bool=False,
 ):
     global should_stop
 
-    if entire_progress_path is None:
-        entire_progress_path = 'entire-progress.yaml'
     entire_progress_path = os.path.abspath(entire_progress_path)
 
     t = Thread(
