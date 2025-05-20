@@ -11,7 +11,7 @@ repository = "https://github.com/pyfemtet/pytest-dashboard"
 python = " >= 3.9, < 4.0.0"
 pytest = "^7.4.3"
 pyyaml = "^6.0.1"
-fire = "^0.6.0"
+fire = ">=0.7.0"
 
 [tool.poetry-dynamic-versioning]
 enable = true
