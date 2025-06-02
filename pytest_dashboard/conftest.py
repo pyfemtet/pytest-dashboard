@@ -1,34 +1,15 @@
-"""Create and update [datetime]-progress.yaml file as processing progresses.
-
-YAML basic format
-
-key01: value01  # yaml['key01'] == 'value01'
-key02: 1  # yaml['key02'] == 1
-key03: true  # yaml['key03'] == True
-key04: null  # yaml['key04'] is None
-
-# yaml['list'][0] == 'element01'
-list:
-  - element01
-  - element02
-  - element03
-
-"""
+"""Create and update [datetime]-progress.yaml file as processing progresses."""
 
 
 import os
 import datetime
-# from typing import Tuple
 
 from pytest import (
     Session,
-    # Config,
     TestReport,
 )
 
 
-BR = '\n'
-during_test = False
 progress_path = None
 
 
@@ -52,34 +33,21 @@ def pytest_addoption(parser):
 def pytest_collection_finish(session: Session):
     specified_path = session.config.getoption('progress_path')
     set_log_path(session.startpath, specified_path)  # if None, directory where pytest is launched
-    # file_or_dir: Tuple[str] or None = session.config.getoption('file_or_dir'))  # list of specified [file_or_dir]
-    with open(progress_path, 'w', encoding='utf-8', newline=BR) as f:
-        f.write(f'items:{BR}')
-        f.writelines([f'  - {item.name}{BR}' for item in session.items])
-        f.write(f'results:{BR}')
+
+    item_names = set([item.name for item in session.items])
+    assert len(item_names) == len(session.items), 'The test name must not be duplicated.'
+
+    with open(progress_path, 'w', encoding='utf-8', newline='\n') as f:
+        f.write(f'items:\n')
+        f.writelines([f'  - {item.name}\n' for item in session.items])
+        f.write(f'results:\n')
 
 
-def pytest_runtest_setup(item):
-    global during_test
-    during_test = True
-    with open(progress_path, 'a', encoding='utf-8', newline=BR) as f:
-        f.write(f'  -{BR}')
-        f.write(
-            f'    name: {item.name}{BR}'
-        )
+def pytest_runtest_logreport(report: TestReport):
+    with open(progress_path, 'a', encoding='utf-8', newline='\n') as f:
 
+        if report.when == 'setup' and report.outcome == 'skipped':
+            f.write(f'  {report.location[2]}: skipped\n')
 
-def pytest_report_teststatus(report: TestReport, config):
-    global during_test
-    if during_test:
-        with open(progress_path, 'a', encoding='utf-8', newline=BR) as f:
-            f.write(
-                f'    {report.when}: {report.outcome}{BR}'
-            )
-    if report.when == 'teardown':
-        during_test = False
-
-
-def pytest_runtest_teardown(item):
-    # this function is called before pytest_report_teststatus
-    pass
+        elif report.when == 'call':
+            f.write(f'  {report.location[2]}: {report.outcome}\n')
